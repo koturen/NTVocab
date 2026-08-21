@@ -1,4 +1,4 @@
-# VocaLearn — Website học từ vựng tiếng Anh
+# NTVocab — Website học từ vựng tiếng Anh
 
 Website học & ôn tập từ vựng tiếng Anh theo bài học, dữ liệu lấy trực tiếp từ
 Google Sheets. Xây dựng bằng HTML + CSS + JavaScript thuần (không framework),

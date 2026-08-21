@@ -12,7 +12,7 @@
  */
 const APP_CONFIG = {
   // TODO: thay bằng URL Web App thật của bạn sau khi deploy Google Apps Script
-  API_URL: "https://script.google.com/macros/s/AKfycbxOSDlCx8xHLxgGP8G_vwbISMN-KMcUKRKOcMyuvZpb2oYeTuQ3DBnXlBAOb4Y_gXFl8A/exec",
+  API_URL: "https://script.google.com/macros/s/AKfycbwmzdSSoxV_URVZpn6jiVPF_CpLOp-1hsfcLLzMrSkA_5ODadZk_qaMsT7zU2aieiGNMQ/exec",
 
   // Thời gian cache dữ liệu lấy từ Google Sheets (ms) để tránh gọi API liên tục
   CACHE_TTL_MS: 5 * 60 * 1000, // 5 phút

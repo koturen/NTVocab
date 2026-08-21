@@ -1,11 +1,13 @@
 /**
- * Code.gs — Google Apps Script Web App API cho VocaLearn
+ * Code.gs — Google Apps Script Web App API cho NTVocab
  * ---------------------------------------------------------------------------
  * CÁCH HOẠT ĐỘNG
  * Mỗi Sheet/Tab trong Google Sheets = một bài học. Hàng đầu tiên là tiêu đề
- * cột theo đúng thứ tự:
+ * cột theo đúng thứ tự (KHỚP với sheet hiện tại — không có cột STT):
  *
- *   STT | English | Vietnamese | Loại từ | CEFR Band
+ *   English | Loại từ | Vietnamese | CEFR Band
+ *
+ * STT được tự sinh theo số thứ tự hàng (không đọc từ Sheet).
  *
  * File này expose một Web App (doGet) hỗ trợ 3 action, gọi qua query string:
  *
@@ -79,7 +81,11 @@ function getAllVocabulary() {
   return all;
 }
 
-/** Đọc dữ liệu 1 sheet thành mảng object { stt, en, vi, pos, cefr } */
+/**
+ * Đọc dữ liệu 1 sheet thành mảng object { stt, en, vi, pos, cefr }.
+ * Thứ tự cột hiện tại: A=English | B=Loại từ | C=Vietnamese | D=CEFR Band
+ * (không có cột STT riêng — STT được tự đánh số theo thứ tự hàng).
+ */
 function readWordsFromSheet(sheet) {
   const lastRow = sheet.getLastRow();
   const lastCol = sheet.getLastColumn();
@@ -87,13 +93,13 @@ function readWordsFromSheet(sheet) {
 
   const values = sheet.getRange(2, 1, lastRow - 1, lastCol).getValues();
   return values
-    .filter(row => row[1] !== "" && row[1] !== null) // bỏ hàng trống (cột English rỗng)
+    .filter(row => row[0] !== "" && row[0] !== null) // bỏ hàng trống (cột English rỗng)
     .map((row, i) => ({
-      stt: row[0] || i + 1,
-      en: String(row[1] || "").trim(),
-      vi: String(row[2] || "").trim(),
-      pos: String(row[3] || "").trim(),
-      cefr: String(row[4] || "").trim(),
+      stt: i + 1,
+      en: String(row[0] || "").trim(),   // A: English
+      pos: String(row[1] || "").trim(),   // B: Loại từ
+      vi: String(row[2] || "").trim(),   // C: Vietnamese
+      cefr: String(row[3] || "").trim(),   // D: CEFR Band
     }));
 }
 

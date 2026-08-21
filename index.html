@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>VocaLearn — Học từ vựng tiếng Anh</title>
+<meta name="description" content="Học và ôn tập từ vựng tiếng Anh theo bài học, với flashcards, quiz và theo dõi tiến độ." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body data-theme="light">
+
+<div class="app-shell">
+
+  <!-- ============================== SIDEBAR (desktop/tablet) ============================== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">Vc</div>
+      <div>
+        <div class="brand-name">VocaLearn</div>
+        <div class="brand-tag">Học từ vựng mỗi ngày</div>
+      </div>
+    </div>
+
+    <nav class="nav-group">
+      <button class="nav-item active" data-route="#/dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+        <span>Trang chủ</span>
+      </button>
+      <button class="nav-item" data-route="#/achievements">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5"/></svg>
+        <span>Huy hiệu</span>
+      </button>
+    </nav>
+
+    <div class="nav-group">
+      <div class="nav-label">Bài học</div>
+      <div class="lesson-nav-list" id="sidebarLessonList">
+        <!-- rendered by lessons.js -->
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="theme-toggle" id="themeToggle">
+        <span id="themeToggleLabel">🌙 Chế độ tối</span>
+        <span id="themeToggleIcon">🌙</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============================== TOPBAR (mobile) ============================== -->
+  <div>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">Vc</div>
+        <div class="brand-name" style="display:block;">VocaLearn</div>
+      </div>
+      <button class="btn btn-icon btn-ghost" id="mobileThemeToggle" aria-label="Đổi giao diện">🌙</button>
+    </header>
+
+    <!-- ============================== MAIN CONTENT ============================== -->
+    <main class="main">
+
+      <!-- ---------- DASHBOARD ---------- -->
+      <section class="view" id="view-dashboard" data-view="dashboard">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Chào bạn 👋</h1>
+            <p class="page-subtitle">Cùng ôn lại vài từ vựng hôm nay nhé.</p>
+          </div>
+          <div class="search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input type="text" class="search-input" id="globalSearchInput" placeholder="Tìm kiếm từ vựng..." autocomplete="off" />
+            <div class="search-results" id="globalSearchResults"></div>
+          </div>
+        </div>
+
+        <div class="stat-grid" id="statGrid"><!-- rendered by app.js --></div>
+
+        <div class="section-block">
+          <div class="section-heading">
+            <h2>Danh sách bài học</h2>
+          </div>
+          <div id="lessonListContainer">
+            <div class="state-block"><div class="spinner"></div><div class="state-title">Đang tải bài học...</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- LESSON DETAIL ---------- -->
+      <section class="view" id="view-lesson" data-view="lesson">
+        <button class="btn btn-ghost btn-sm" data-route="#/dashboard">← Quay lại trang chủ</button>
+        <div class="page-header" style="margin-top:12px;">
+          <div>
+            <h1 class="page-title" id="lessonTitle">Bài học</h1>
+            <p class="page-subtitle" id="lessonSubtitle">0 từ</p>
+          </div>
+        </div>
+        <div style="max-width:420px;margin-bottom:16px;">
+          <div class="progress-track"><div class="progress-fill" id="lessonProgressFill" style="width:0%"></div></div>
+        </div>
+
+        <div class="lesson-toolbar">
+          <div class="search-wrap" style="max-width:280px;">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input type="text" class="search-input" id="lessonSearchInput" placeholder="Tìm trong bài học..." autocomplete="off" />
+          </div>
+          <div class="lesson-actions">
+            <button class="btn btn-primary" id="btnStartFlashcards">🗂️ Flashcards</button>
+            <button class="btn btn-secondary" id="btnStartQuiz">📝 Quiz</button>
+            <button class="btn btn-outline" id="btnReviewWrong">🔁 Ôn từ sai</button>
+          </div>
+        </div>
+
+        <div class="word-list" id="wordListContainer"></div>
+      </section>
+
+      <!-- ---------- FLASHCARDS ---------- -->
+      <section class="view" id="view-flashcards" data-view="flashcards">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title" id="flashcardsLessonTitle">Flashcards</h1>
+            <div class="group-tabs" id="flashcardGroupTabs">
+              <button class="group-tab active" data-group="all">Tất cả</button>
+              <button class="group-tab" data-group="unseen">Chưa nhớ</button>
+              <button class="group-tab" data-group="hard">Từ khó</button>
+              <button class="group-tab" data-group="known">Đã nhớ</button>
+              <button class="group-tab" data-group="favorite">⭐ Yêu thích</button>
+            </div>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="btnExitFlashcards">← Quay lại bài học</button>
+        </div>
+
+        <div class="flashcard-stage">
+          <div class="flashcard-progress-label"><span id="fcIndex">1</span> / <span id="fcTotal">0</span></div>
+
+          <div class="flashcard-scene" id="flashcardScene">
+            <div class="flashcard" id="flashcardEl">
+              <div class="flashcard-face flashcard-face-front">
+                <button class="flashcard-fav" id="fcFavBtn" aria-label="Yêu thích">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.3l-6.2 3.7 1.6-7L2 9.2l7.1-.6L12 2l2.9 6.6 7.1.6-5.4 4.8 1.6 7z"/></svg>
+                </button>
+                <div class="flashcard-word" id="fcWordFront">—</div>
+                <div class="flashcard-hint">Nhấn để xem nghĩa</div>
+              </div>
+              <div class="flashcard-face flashcard-face-back">
+                <div class="flashcard-vi" id="fcWordBack">—</div>
+                <div class="flashcard-meta-row">
+                  <span class="word-pos" id="fcPos"></span>
+                  <span class="word-cefr" id="fcCefr"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flashcard-controls">
+            <button class="flashcard-nav-btn" id="fcPrevBtn" aria-label="Từ trước">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="btn btn-primary" id="fcRevealBtn">Hiện nghĩa</button>
+            <button class="flashcard-nav-btn" id="fcNextBtn" aria-label="Từ tiếp theo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+
+          <div class="rating-row" id="fcRatingRow">
+            <button class="rating-btn" data-status="unseen">😶 Chưa nhớ</button>
+            <button class="rating-btn" data-status="hard">🤔 Khó nhớ</button>
+            <button class="rating-btn" data-status="known">✅ Đã nhớ</button>
+          </div>
+
+          <div class="flashcard-options-bar">
+            <label class="option-chip">
+              <span class="switch"><input type="checkbox" id="fcRandomToggle"/><span class="switch-track"></span></span>
+              Trộn thẻ
+            </label>
+            <label class="option-chip">
+              <span class="switch"><input type="checkbox" id="fcAutoplayToggle"/><span class="switch-track"></span></span>
+              Auto play
+            </label>
+            <label class="option-chip">
+              Tốc độ:
+              <select id="fcSpeedSelect">
+                <option value="3000">3 giây</option>
+                <option value="5000" selected>5 giây</option>
+                <option value="10000">10 giây</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- QUIZ ---------- -->
+      <section class="view" id="view-quiz" data-view="quiz">
+        <div class="quiz-header">
+          <button class="btn btn-ghost btn-sm" id="btnExitQuiz">← Thoát</button>
+          <div class="progress-track quiz-progress-track"><div class="progress-fill" id="quizProgressFill" style="width:0%"></div></div>
+          <div class="quiz-counter"><span id="quizIndex">1</span>/<span id="quizTotal">0</span></div>
+        </div>
+
+        <div class="quiz-card">
+          <div class="quiz-question-label" id="quizDirectionLabel">Chọn nghĩa tiếng Việt đúng</div>
+          <div class="quiz-question" id="quizQuestionText">—</div>
+          <div class="quiz-options" id="quizOptions"></div>
+          <div class="quiz-explain hidden" id="quizExplain"></div>
+          <div class="quiz-next-row">
+            <button class="btn btn-primary hidden" id="quizNextBtn">Câu tiếp theo →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- QUIZ RESULT ---------- -->
+      <section class="view" id="view-quiz-result" data-view="quiz-result">
+        <div class="result-hero">
+          <div class="result-score-ring">
+            <svg viewBox="0 0 120 120" width="150" height="150">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="var(--bg-sunken)" stroke-width="12"/>
+              <circle id="resultRing" cx="60" cy="60" r="52" fill="none" stroke="var(--sprout)" stroke-width="12" stroke-linecap="round" transform="rotate(-90 60 60)"/>
+            </svg>
+            <div class="result-score-value">
+              <div class="result-score-num" id="resultPct">0%</div>
+              <div class="result-score-pct">điểm số</div>
+            </div>
+          </div>
+          <h1 class="page-title" id="resultHeadline">Hoàn thành quiz!</h1>
+
+          <div class="result-stats-row">
+            <div class="result-stat"><div class="result-stat-num" id="resultCorrect">0</div><div class="result-stat-label">Câu đúng</div></div>
+            <div class="result-stat"><div class="result-stat-num" id="resultWrong">0</div><div class="result-stat-label">Câu sai</div></div>
+            <div class="result-stat"><div class="result-stat-num" id="resultTotal">0</div><div class="result-stat-label">Tổng số câu</div></div>
+          </div>
+
+          <div class="result-actions">
+            <button class="btn btn-secondary" id="btnRetryQuiz">🔁 Làm lại</button>
+            <button class="btn btn-coral hidden" id="btnReviewWrongResult">📚 Ôn từ sai</button>
+            <button class="btn btn-primary" id="btnBackToLesson">Quay lại bài học</button>
+          </div>
+        </div>
+
+        <div class="wrong-list" id="resultWrongList"></div>
+      </section>
+
+      <!-- ---------- ACHIEVEMENTS ---------- -->
+      <section class="view" id="view-achievements" data-view="achievements">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Huy hiệu 🏆</h1>
+            <p class="page-subtitle">Mở khoá thành tích khi bạn học tập chăm chỉ.</p>
+          </div>
+        </div>
+        <div class="achv-grid" id="achvGrid"></div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ============================== BOTTOM NAV (mobile) ============================== -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bottom-nav-item active" data-route="#/dashboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+    Trang chủ
+  </button>
+  <button class="bottom-nav-item" id="bottomNavSearch">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+    Tìm kiếm
+  </button>
+  <button class="bottom-nav-item" data-route="#/achievements">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5"/></svg>
+    Huy hiệu
+  </button>
+</nav>
+
+<!-- ============================== MODAL (mobile search + confirm dialogs) ============================== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<!-- ============================== TOASTS ============================== -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- ============================== SCRIPTS ============================== -->
+<script src="js/config.js"></script>
+<script src="js/sheets.js"></script>
+<script src="js/progress.js"></script>
+<script src="js/achievements.js"></script>
+<script src="js/speech.js"></script>
+<script src="js/lessons.js"></script>
+<script src="js/flashcards.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/search.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
